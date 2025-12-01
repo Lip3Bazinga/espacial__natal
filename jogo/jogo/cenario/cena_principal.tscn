@@ -1,0 +1,170 @@
+[gd_scene load_steps=31 format=3 uid="uid://3upg0h85m482"]
+
+[ext_resource type="Shader" uid="uid://b4td08aowpo2t" path="res://cenario/shaders/terra_shader.gdshader" id="1_d8jko"]
+[ext_resource type="Texture2D" uid="uid://bjb7hfcqpxj7o" path="res://cenario/imagens/cores_dia.jpg" id="2_xnt4c"]
+[ext_resource type="Shader" uid="uid://dix3x67fu330r" path="res://cenario/shaders/lua_shader.gdshader" id="3_blaq1"]
+[ext_resource type="Texture2D" uid="uid://djcnok1sda5ev" path="res://cenario/imagens/heightmap.jpg" id="3_xnt4c"]
+[ext_resource type="Script" uid="uid://dhqhn354ahorp" path="res://cenario/scripts/SolController.gd" id="4_0k384"]
+[ext_resource type="Script" uid="uid://bwot3710i71um" path="res://cenario/scripts/TerraController.gd" id="4_ba883"]
+[ext_resource type="Texture2D" uid="uid://cy8ilw4mb280g" path="res://cenario/imagens/cores_lua.jpg" id="4_rpwbf"]
+[ext_resource type="Shader" uid="uid://h02188y5gmjs" path="res://cenario/shaders/sol_shader.gdshader" id="8_h0g6k"]
+[ext_resource type="Script" uid="uid://lsfwujwwhg40" path="res://cenario/scripts/LuaController.gd" id="8_x4ufw"]
+[ext_resource type="Script" uid="uid://kcg4vm07t4s1" path="res://cenario/scripts/LuzSolController.gd" id="9_bhhaf"]
+[ext_resource type="Texture2D" uid="uid://lptinkk8b8w5" path="res://cenario/imagens/cores_sol.jpeg" id="9_ht877"]
+[ext_resource type="PackedScene" uid="uid://c36velgas3n3k" path="res://addons/zylann.atmosphere/planet_atmosphere.tscn" id="10_0sx8x"]
+[ext_resource type="Texture2D" uid="uid://d3y7thhsuan6t" path="res://cenario/imagens/skybox.jpg" id="12_7d64f"]
+[ext_resource type="Shader" uid="uid://ckbu2tpc7ltqp" path="res://addons/zylann.atmosphere/shaders/planet_atmosphere_clouds.gdshader" id="13_0sx8x"]
+[ext_resource type="Script" uid="uid://ctj6ajkpvnwoo" path="res://addons/zylann.atmosphere/noise_cubemap.gd" id="14_v7lfu"]
+[ext_resource type="Script" uid="uid://claoivy1fwjhq" path="res://cenario/scripts/CharacterBody3dClontroller.gd" id="16_v7lfu"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ht877"]
+render_priority = 0
+shader = ExtResource("8_h0g6k")
+shader_parameter/surface_texture = ExtResource("9_ht877")
+shader_parameter/base_emission = 20.0
+shader_parameter/hotspot_intensity = 50.0
+shader_parameter/pulse_frequency = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_x4ufw"]
+lightmap_size_hint = Vector2i(640, 326)
+material = SubResource("ShaderMaterial_ht877")
+radius = 40.0
+height = 80.0
+radial_segments = 16
+rings = 8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rpwbf"]
+render_priority = 0
+shader = ExtResource("3_blaq1")
+shader_parameter/color_tex = ExtResource("4_rpwbf")
+
+[sub_resource type="SphereMesh" id="SphereMesh_vrhoc"]
+material = SubResource("ShaderMaterial_rpwbf")
+radius = 16.2
+height = 32.4
+radial_segments = 32
+rings = 16
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_72v40"]
+render_priority = 0
+shader = ExtResource("1_d8jko")
+shader_parameter/height_tex = ExtResource("3_xnt4c")
+shader_parameter/color_tex = ExtResource("2_xnt4c")
+shader_parameter/height_scale = 5.0
+shader_parameter/invert_height = false
+
+[sub_resource type="SphereMesh" id="SphereMesh_it5d1"]
+material = SubResource("ShaderMaterial_72v40")
+radius = 60.0
+height = 120.0
+radial_segments = 256
+rings = 128
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_qkeui"]
+noise_type = 2
+frequency = 0.1
+fractal_type = 2
+fractal_octaves = 8
+fractal_gain = 0.665
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_47cj0"]
+noise = SubResource("FastNoiseLite_qkeui")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_16ssy"]
+domain_warp_enabled = true
+domain_warp_amplitude = 90.0
+domain_warp_frequency = 0.01
+domain_warp_fractal_octaves = 3
+
+[sub_resource type="Cubemap" id="Cubemap_j782l"]
+script = ExtResource("14_v7lfu")
+noise = SubResource("FastNoiseLite_16ssy")
+resolution = 256
+scale = Vector3(100, 200, 100)
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_twck3"]
+panorama = ExtResource("12_7d64f")
+energy_multiplier = 0.05
+
+[sub_resource type="Sky" id="Sky_mx20v"]
+sky_material = SubResource("PanoramaSkyMaterial_twck3")
+
+[sub_resource type="Environment" id="Environment_0sx8x"]
+background_mode = 2
+background_energy_multiplier = 16.0
+sky = SubResource("Sky_mx20v")
+glow_enabled = true
+glow_levels/3 = 0.0
+glow_levels/4 = 1.0
+glow_levels/6 = 1.0
+glow_intensity = 4.0
+glow_strength = 0.8
+glow_blend_mode = 0
+glow_hdr_scale = 1.0
+volumetric_fog_density = 0.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_v7lfu"]
+top_radius = 1.0
+bottom_radius = 1.0
+height = 1.0
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Sol" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_x4ufw")
+script = ExtResource("4_0k384")
+
+[node name="LuzSol" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+script = ExtResource("9_bhhaf")
+
+[node name="Lua" type="MeshInstance3D" parent="." node_paths=PackedStringArray("terra")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 700)
+mesh = SubResource("SphereMesh_vrhoc")
+script = ExtResource("8_x4ufw")
+terra = NodePath("../Terra/TerraSolida")
+
+[node name="Terra" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2000, 0, 0)
+script = ExtResource("4_ba883")
+
+[node name="TerraSolida" type="MeshInstance3D" parent="Terra"]
+transform = Transform3D(1, 0, 0, 0, 0.92050487, -0.39073113, 0, 0.39073113, 0.92050487, 0, 0, 0)
+mesh = SubResource("SphereMesh_it5d1")
+skeleton = NodePath("../..")
+
+[node name="PlanetAthmosphere" parent="Terra" instance=ExtResource("10_0sx8x")]
+planet_radius = 60.0
+atmosphere_height = 20.0
+sun_path = NodePath("../../LuzSol")
+custom_shader = ExtResource("13_0sx8x")
+shader_params/u_density = 0.3
+shader_params/u_scattering_strength = 0.2
+shader_params/u_atmosphere_modulate = Color(1, 0.980392, 0.964706, 1)
+shader_params/u_atmosphere_ambient_color = Color(0.0196078, 0.0196078, 0.0431373, 1)
+shader_params/u_cloud_density_scale = 0.2
+shader_params/u_cloud_bottom = 0.2
+shader_params/u_cloud_top = 0.3
+shader_params/u_cloud_blend = 0.5
+shader_params/u_cloud_shape_texture = SubResource("NoiseTexture3D_47cj0")
+shader_params/u_cloud_shape_invert = 1.0
+shader_params/u_cloud_coverage_bias = 0.0
+shader_params/u_cloud_shape_factor = 0.5
+shader_params/u_cloud_shape_scale = 0.1
+shader_params/u_cloud_coverage_cubemap = SubResource("Cubemap_j782l")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_0sx8x")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("terra")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2280.339, 0, 0)
+script = ExtResource("16_v7lfu")
+terra = NodePath("../Terra/TerraSolida")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185.69092, 0, 0)
+mesh = SubResource("CylinderMesh_v7lfu")
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
+transform = Transform3D(-0.14190331, 0, -0.98988056, 0, 1, 0, 0.98988056, 0, -0.14190331, -196.36987, 0, 0)
