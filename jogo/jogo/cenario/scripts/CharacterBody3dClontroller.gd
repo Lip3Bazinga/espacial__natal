@@ -1,65 +1,78 @@
 extends Node3D
 
 @export var terra: Node3D
-@export var velocidade_angular_phi: float = 60.0
-@export var velocidade_angular_theta: float = 60.0
+@export var velocidade_angular_phi: float = 60.0   # Velocidade Esquerda/Direita
+@export var velocidade_angular_theta: float = 60.0 # Velocidade Cima/Baixo
 @export var raio_orbita_inicial: float = 20.0
 
 var R: float
-var phi: float = 0.0 # Longitude (gira ao redor do Y)
-var theta: float = 0.0 # Latitude (ângulo polar, 0=Polo Norte, 180=Polo Sul)
+var phi: float = 0.0 
+var theta: float = 90.0 # Começamos no meio (90) para evitar o bug do polo (0)
+
+# Variável para controlar se estamos subindo ou descendo
+var direcao_theta: float = 1.0 
 
 func _ready():
 	R = raio_orbita_inicial
+	if not terra:
+		terra = get_node("../Terra/TerraSolida") # Ajuste o caminho se necessário
 
 func _process(delta: float) -> void:
 	if not terra:
 		return
 
+	# Pega os inputs
 	var input_theta = Input.get_action_strength("ui_up") - Input.get_action_strength("ui_down")
 	var input_phi = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 	
-	# 1. Atualiza e Normaliza PHI (Longitude)
+	# --- 1. Atualiza PHI (Longitude/Horizontal) ---
 	phi += input_phi * velocidade_angular_phi * delta
-	# Garante que PHI permaneça entre 0 e 360 graus para evitar números gigantes
-	# e problemas de precisão, mantendo a rotação infinita.
 	phi = fmod(phi, 360.0) 
-	if phi < 0:
-		phi += 360.0
+	if phi < 0: phi += 360.0
 	
-	# 2. Atualiza e LIMITA THETA (Latitude)
-	theta += -input_theta * velocidade_angular_theta * delta
+	# --- 2. Atualiza THETA (Latitude/Vertical) ---
+	# Usamos a 'direcao_theta' para inverter o controle quando bater nos polos
+	theta += -input_theta * velocidade_angular_theta * delta * direcao_theta
 	
-	# O problema de inversão ocorre APENAS quando theta passa por 0 (Polo Norte) 
-	# ou 180 (Polo Sul). O clamp é a solução mais simples para evitar essa inversão.
-	# Manter o limite de 1.0 a 179.0 impede a inversão de controle.
-	if(theta == 0 or theta == 180):
-		velocidade_angular_theta *= -1
+	# --- 3. PROTEÇÃO DOS POLOS (A Correção Real) ---
+	# Usamos 0.1 e 179.9 porque 'float' nunca é exatamente 0
+	if theta <= 0.1:
+		theta = 0.1         # Empurra de volta
+		direcao_theta *= -1 # Inverte o controle
+		phi += 180          # Gira o mundo (efeito de passar pelo polo)
+		
+	elif theta >= 179.9:
+		theta = 179.9
+		direcao_theta *= -1
 		phi += 180
-	
+
+	# --- 4. CÁLCULO DE POSIÇÃO ---
 	var centro = terra.global_position
-	
 	var phi_rad = deg_to_rad(phi)
 	var theta_rad = deg_to_rad(theta)
 	
-	# Conversão para Cartesianas:
-	# x = R * sin(theta) * cos(phi)
-	# z = R * sin(theta) * sin(phi)
-	# y = R * cos(theta)
+	# Matemática esférica
 	var x = R * sin(theta_rad) * cos(phi_rad)
 	var z = R * sin(theta_rad) * sin(phi_rad)
 	var y = R * cos(theta_rad)
 	
-	global_position.x = centro.x + x
-	global_position.y = centro.y + y
-	global_position.z = centro.z + z
+	var nova_posicao = centro + Vector3(x, y, z)
 	
+	# Aplica a posição
+	global_position = nova_posicao
+	
+	# --- 5. OLHAR PARA FRENTE (Anti-Crash) ---
 	var direcao_para_fora = (global_position - centro).normalized()
 	
-	var proxima_posicao_simulada = centro + Vector3(
-		R * sin(theta_rad) * cos(deg_to_rad(phi + 1)),
-		y,
-		R * sin(theta_rad) * sin(deg_to_rad(phi + 1))
-	)
+	# Simulamos um ponto um pouco à frente (1 grau no futuro)
+	var next_phi_rad = deg_to_rad(phi + 1.0) 
 	
-	look_at(proxima_posicao_simulada, direcao_para_fora)
+	var next_x = R * sin(theta_rad) * cos(next_phi_rad)
+	var next_z = R * sin(theta_rad) * sin(next_phi_rad)
+	var next_y = y # Mantemos a altura Y
+	
+	var ponto_futuro = centro + Vector3(next_x, next_y, next_z)
+	
+	# Só olha se o ponto futuro for diferente do atual (maior que 1 milímetro)
+	if global_position.distance_to(ponto_futuro) > 0.001:
+		look_at(ponto_futuro, direcao_para_fora)

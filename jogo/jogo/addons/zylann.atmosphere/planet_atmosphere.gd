@@ -147,7 +147,6 @@ func _request_bake_optical_depth():
 		_optical_depth_baker = OpticalDepthBaker.new()
 		add_child(_optical_depth_baker)
 		_optical_depth_baker.baked.connect(_on_optical_depth_baked)
-	_optical_depth_baker.request_bake(mat)
 
 
 func _on_optical_depth_baked(tex: Texture2D):
