@@ -1,0 +1,226 @@
+[gd_scene load_steps=37 format=3 uid="uid://3upg0h85m482"]
+
+[ext_resource type="Script" uid="uid://cc0yn7j43dmnw" path="res://cenario/scripts/space.gd" id="1_5cx3g"]
+[ext_resource type="Shader" uid="uid://h02188y5gmjs" path="res://cenario/shaders/sol_shader.gdshader" id="7_ctyxm"]
+[ext_resource type="Texture2D" uid="uid://lptinkk8b8w5" path="res://cenario/imagens/cores_sol.jpeg" id="8_5cx3g"]
+[ext_resource type="Script" uid="uid://dhqhn354ahorp" path="res://cenario/scripts/SolController.gd" id="9_pspw6"]
+[ext_resource type="Script" uid="uid://kcg4vm07t4s1" path="res://cenario/scripts/LuzSolController.gd" id="10_lgajv"]
+[ext_resource type="Shader" uid="uid://dix3x67fu330r" path="res://cenario/shaders/lua_shader.gdshader" id="11_tqu7h"]
+[ext_resource type="Texture2D" uid="uid://cy8ilw4mb280g" path="res://cenario/imagens/cores_lua.jpg" id="12_twc7o"]
+[ext_resource type="Script" uid="uid://lsfwujwwhg40" path="res://cenario/scripts/LuaController.gd" id="13_cwrlw"]
+[ext_resource type="Script" uid="uid://bwot3710i71um" path="res://cenario/scripts/TerraController.gd" id="14_jqtjm"]
+[ext_resource type="Shader" uid="uid://b4td08aowpo2t" path="res://cenario/shaders/terra_shader.gdshader" id="15_8j32i"]
+[ext_resource type="Texture2D" uid="uid://bjb7hfcqpxj7o" path="res://cenario/imagens/cores_dia.jpg" id="16_flsdi"]
+[ext_resource type="Texture2D" uid="uid://djcnok1sda5ev" path="res://cenario/imagens/heightmap.jpg" id="17_ammeq"]
+[ext_resource type="PackedScene" uid="uid://c36velgas3n3k" path="res://addons/zylann.atmosphere/planet_atmosphere.tscn" id="18_g6cm7"]
+[ext_resource type="PackedScene" uid="uid://bl0gqjttv8oe0" path="res://cenario/pause-menu.tscn" id="18_ksrwj"]
+[ext_resource type="Shader" uid="uid://ckbu2tpc7ltqp" path="res://addons/zylann.atmosphere/shaders/planet_atmosphere_clouds.gdshader" id="19_dx5vr"]
+[ext_resource type="PackedScene" uid="uid://pdck7c157b87" path="res://cenario/game_over.tscn" id="19_utoji"]
+[ext_resource type="PackedScene" uid="uid://cyfh4kiiv1mf8" path="res://cenario/score_counter.tscn" id="20_lu637"]
+[ext_resource type="Script" uid="uid://ctj6ajkpvnwoo" path="res://addons/zylann.atmosphere/noise_cubemap.gd" id="20_varkn"]
+[ext_resource type="Texture2D" uid="uid://d3y7thhsuan6t" path="res://cenario/imagens/skybox.jpg" id="21_2aer5"]
+[ext_resource type="PackedScene" uid="uid://bpnby6unyclo1" path="res://cenario/main_menu.tscn" id="21_ctyxm"]
+[ext_resource type="FontFile" uid="uid://bdj6cmg5mcgkx" path="res://cenario/fonts/Snowy Christmas.otf" id="22_pspw6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ht877"]
+render_priority = 0
+shader = ExtResource("7_ctyxm")
+shader_parameter/surface_texture = ExtResource("8_5cx3g")
+shader_parameter/base_emission = 20.0
+shader_parameter/hotspot_intensity = 50.0
+shader_parameter/pulse_frequency = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_ksrwj"]
+lightmap_size_hint = Vector2i(640, 326)
+material = SubResource("ShaderMaterial_ht877")
+radius = 80.0
+height = 160.0
+radial_segments = 16
+rings = 8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rpwbf"]
+render_priority = 0
+shader = ExtResource("11_tqu7h")
+shader_parameter/color_tex = ExtResource("12_twc7o")
+
+[sub_resource type="SphereMesh" id="SphereMesh_utoji"]
+material = SubResource("ShaderMaterial_rpwbf")
+radius = 16.2
+height = 32.4
+radial_segments = 32
+rings = 16
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_72v40"]
+render_priority = 0
+shader = ExtResource("15_8j32i")
+shader_parameter/height_tex = ExtResource("17_ammeq")
+shader_parameter/color_tex = ExtResource("16_flsdi")
+shader_parameter/height_scale = 3.0
+shader_parameter/invert_height = false
+
+[sub_resource type="SphereMesh" id="SphereMesh_3022w"]
+material = SubResource("ShaderMaterial_72v40")
+radius = 60.0
+height = 120.0
+radial_segments = 512
+rings = 256
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_pxq2j"]
+radius = 60.0
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_qkeui"]
+noise_type = 2
+frequency = 0.1
+fractal_type = 2
+fractal_octaves = 8
+fractal_gain = 0.665
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_3xoyd"]
+noise = SubResource("FastNoiseLite_qkeui")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_16ssy"]
+domain_warp_enabled = true
+domain_warp_amplitude = 90.0
+domain_warp_frequency = 0.01
+domain_warp_fractal_octaves = 3
+
+[sub_resource type="Cubemap" id="Cubemap_obwvv"]
+script = ExtResource("20_varkn")
+noise = SubResource("FastNoiseLite_16ssy")
+resolution = 256
+scale = Vector3(100, 200, 100)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1km6n"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_ob3ni"]
+panorama = ExtResource("21_2aer5")
+energy_multiplier = 0.05
+
+[sub_resource type="Sky" id="Sky_mx20v"]
+sky_material = SubResource("PanoramaSkyMaterial_ob3ni")
+
+[sub_resource type="Environment" id="Environment_f0hv5"]
+background_mode = 2
+background_energy_multiplier = 15.0
+sky = SubResource("Sky_mx20v")
+ambient_light_sky_contribution = 0.3
+glow_enabled = true
+glow_levels/3 = 0.0
+glow_levels/4 = 1.0
+glow_levels/6 = 1.0
+glow_intensity = 4.0
+glow_strength = 0.8
+glow_blend_mode = 0
+glow_hdr_scale = 1.0
+volumetric_fog_density = 0.0
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_5cx3g")
+
+[node name="PauseMenu" parent="." instance=ExtResource("18_ksrwj")]
+visible = false
+
+[node name="GameOver" parent="." instance=ExtResource("19_utoji")]
+visible = false
+
+[node name="ScoreCounter" parent="." instance=ExtResource("20_lu637")]
+offset_left = 236.0
+offset_top = 9.0
+offset_right = -853.0
+offset_bottom = -571.0
+theme_override_fonts/font = ExtResource("22_pspw6")
+theme_override_font_sizes/font_size = 75
+
+[node name="MainMenu" parent="." instance=ExtResource("21_ctyxm")]
+visible = false
+
+[node name="Sol" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_ksrwj")
+script = ExtResource("9_pspw6")
+
+[node name="LuzSol" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+script = ExtResource("10_lgajv")
+
+[node name="Lua" type="MeshInstance3D" parent="." node_paths=PackedStringArray("terra")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2400, 0, 0)
+mesh = SubResource("SphereMesh_utoji")
+script = ExtResource("13_cwrlw")
+terra = NodePath("")
+
+[node name="Terra" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2000, 0, 0)
+script = ExtResource("14_jqtjm")
+
+[node name="TerraSolida" type="MeshInstance3D" parent="Terra"]
+transform = Transform3D(1, 0, 0, 0, 0.92050487, -0.39073113, 0, 0.39073113, 0.92050487, 0, 0, 0)
+mesh = SubResource("SphereMesh_3022w")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terra"]
+shape = SubResource("SphereShape3D_pxq2j")
+
+[node name="PlanetAthmosphere" parent="Terra" instance=ExtResource("18_g6cm7")]
+planet_radius = 60.0
+atmosphere_height = 20.0
+sun_path = NodePath("../../LuzSol")
+custom_shader = ExtResource("19_dx5vr")
+shader_params/u_density = 0.3
+shader_params/u_scattering_strength = 0.2
+shader_params/u_atmosphere_modulate = Color(1, 0.980392, 0.964706, 1)
+shader_params/u_atmosphere_ambient_color = Color(0.0196078, 0.0196078, 0.0431373, 1)
+shader_params/u_cloud_density_scale = 0.2
+shader_params/u_cloud_bottom = 0.2
+shader_params/u_cloud_top = 0.3
+shader_params/u_cloud_blend = 0.5
+shader_params/u_cloud_shape_texture = SubResource("NoiseTexture3D_3xoyd")
+shader_params/u_cloud_shape_invert = 1.0
+shader_params/u_cloud_coverage_bias = 0.0
+shader_params/u_cloud_shape_factor = 0.5
+shader_params/u_cloud_shape_scale = 0.1
+shader_params/u_cloud_coverage_cubemap = SubResource("Cubemap_obwvv")
+
+[node name="Player" type="CharacterBody3D" parent="Terra"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 62, 0)
+collision_mask = 2
+
+[node name="CameraPlayer" type="Camera3D" parent="Terra/Player"]
+transform = Transform3D(-3.876472e-08, 0.8868335, -0.46208915, -1, -4.3711385e-08, 0, -2.0198557e-08, 0.46208915, 0.8868335, -1.1337891, 0, 4.3761616)
+
+[node name="treno" parent="Terra/Player"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
+
+[node name="RayCast3D" type="RayCast3D" parent="Terra/Player"]
+
+[node name="Area3D" type="Area3D" parent="Terra/Player"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terra/Player/Area3D"]
+transform = Transform3D(0.5, 8.4523414e-08, 3.472899e-09, -8.4523414e-08, 0.5, 2.1130846e-08, -3.4728955e-09, -2.1130846e-08, 0.5, -0.46777344, 0, 2.346953)
+shape = SubResource("BoxShape3D_1km6n")
+
+[node name="CharacterBody3D" parent="Terra"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_f0hv5")
+
+[connection signal="area_entered" from="Terra/Player/Area3D" to="Terra/Player" method="_on_area_3d_area_entered"]
