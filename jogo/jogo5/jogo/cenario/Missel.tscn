@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfbsaeixucbco"]
+
+[ext_resource type="PackedScene" uid="uid://tn8hw6gsr0hr" path="res://modelos/missle.glb" id="1_diojt"]
+[ext_resource type="Script" uid="uid://d1ofx2nxs4g6p" path="res://cenario/scripts/MisselController.gd" id="1_m4i0n"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_m4i0n"]
+
+[node name="CharacterBody3D" type="CharacterBody3D"]
+collision_layer = 2
+script = ExtResource("1_m4i0n")
+
+[node name="missle" parent="." instance=ExtResource("1_diojt")]
+transform = Transform3D(-0.1, 0, -1.509958e-08, 0, 0.1, 0, 1.509958e-08, 0, -0.1, 0, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(4, 0, 0, 0, -1.7484555e-07, -4, 0, 4, -1.7484555e-07, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+shape = SubResource("BoxShape3D_m4i0n")
+
+[node name="Timer" type="Timer" parent="."]

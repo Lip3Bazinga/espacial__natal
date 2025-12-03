@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bgtjlfe4tmura"]
+
+[ext_resource type="PackedScene" uid="uid://c7kq337e35b5e" path="res://modelos/avião.glb" id="1_wxxag"]
+
+[node name="avião" instance=ExtResource("1_wxxag")]
+
+[node name="Cylinder" parent="." index="0"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1.993874, 0, 0, 0, 0)

@@ -1,6 +1,8 @@
-[gd_scene load_steps=31 format=3 uid="uid://3upg0h85m482"]
+[gd_scene load_steps=37 format=3 uid="uid://3upg0h85m482"]
 
+[ext_resource type="Script" uid="uid://docsigehnmafb" path="res://cenario/scripts/SpawnerController.gd" id="1_38r3f"]
 [ext_resource type="Shader" uid="uid://b4td08aowpo2t" path="res://cenario/shaders/terra_shader.gdshader" id="1_d8jko"]
+[ext_resource type="PackedScene" uid="uid://dk3te4bj2s4c1" path="res://cenario/Inimigo.tscn" id="2_hbki5"]
 [ext_resource type="Texture2D" uid="uid://bjb7hfcqpxj7o" path="res://cenario/imagens/cores_dia.jpg" id="2_xnt4c"]
 [ext_resource type="Shader" uid="uid://dix3x67fu330r" path="res://cenario/shaders/lua_shader.gdshader" id="3_blaq1"]
 [ext_resource type="Texture2D" uid="uid://djcnok1sda5ev" path="res://cenario/imagens/heightmap.jpg" id="3_xnt4c"]
@@ -12,10 +14,13 @@
 [ext_resource type="Script" uid="uid://kcg4vm07t4s1" path="res://cenario/scripts/LuzSolController.gd" id="9_bhhaf"]
 [ext_resource type="Texture2D" uid="uid://lptinkk8b8w5" path="res://cenario/imagens/cores_sol.jpeg" id="9_ht877"]
 [ext_resource type="PackedScene" uid="uid://c36velgas3n3k" path="res://addons/zylann.atmosphere/planet_atmosphere.tscn" id="10_0sx8x"]
+[ext_resource type="Texture2D" uid="uid://4fk4045dwf2" path="res://cenario/imagens/countries_mask.png" id="11_v7lfu"]
 [ext_resource type="Texture2D" uid="uid://d3y7thhsuan6t" path="res://cenario/imagens/skybox.jpg" id="12_7d64f"]
-[ext_resource type="Shader" uid="uid://ckbu2tpc7ltqp" path="res://addons/zylann.atmosphere/shaders/planet_atmosphere_clouds.gdshader" id="13_0sx8x"]
-[ext_resource type="Script" uid="uid://ctj6ajkpvnwoo" path="res://addons/zylann.atmosphere/noise_cubemap.gd" id="14_v7lfu"]
-[ext_resource type="Script" uid="uid://claoivy1fwjhq" path="res://cenario/scripts/CharacterBody3dClontroller.gd" id="16_v7lfu"]
+[ext_resource type="Shader" uid="uid://c6wnqrgfqfpt" path="res://addons/zylann.atmosphere/shaders/planet_atmosphere_clouds.gdshader" id="13_0sx8x"]
+[ext_resource type="Script" uid="uid://cxs3hkm4atltc" path="res://addons/zylann.atmosphere/noise_cubemap.gd" id="14_v7lfu"]
+[ext_resource type="Script" uid="uid://is7f162jeqn" path="res://cenario/scripts/PlayerController.gd" id="17_47cj0"]
+[ext_resource type="PackedScene" uid="uid://dnm8shltpx6ju" path="res://modelos/treno.glb" id="17_j782l"]
+[ext_resource type="PackedScene" uid="uid://dfbsaeixucbco" path="res://cenario/Missel.tscn" id="20_vixfv"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ht877"]
 render_priority = 0
@@ -28,8 +33,8 @@ shader_parameter/pulse_frequency = 0.0
 [sub_resource type="SphereMesh" id="SphereMesh_x4ufw"]
 lightmap_size_hint = Vector2i(640, 326)
 material = SubResource("ShaderMaterial_ht877")
-radius = 40.0
-height = 80.0
+radius = 80.0
+height = 160.0
 radial_segments = 16
 rings = 8
 
@@ -50,15 +55,19 @@ render_priority = 0
 shader = ExtResource("1_d8jko")
 shader_parameter/height_tex = ExtResource("3_xnt4c")
 shader_parameter/color_tex = ExtResource("2_xnt4c")
-shader_parameter/height_scale = 5.0
+shader_parameter/country_mask_tex = ExtResource("11_v7lfu")
+shader_parameter/height_scale = 3.0
 shader_parameter/invert_height = false
 
 [sub_resource type="SphereMesh" id="SphereMesh_it5d1"]
 material = SubResource("ShaderMaterial_72v40")
 radius = 60.0
 height = 120.0
-radial_segments = 256
-rings = 128
+radial_segments = 512
+rings = 256
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hbki5"]
+radius = 60.0
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_qkeui"]
 noise_type = 2
@@ -83,6 +92,8 @@ noise = SubResource("FastNoiseLite_16ssy")
 resolution = 256
 scale = Vector3(100, 200, 100)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_hbki5"]
+
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_twck3"]
 panorama = ExtResource("12_7d64f")
 energy_multiplier = 0.05
@@ -92,8 +103,9 @@ sky_material = SubResource("PanoramaSkyMaterial_twck3")
 
 [sub_resource type="Environment" id="Environment_0sx8x"]
 background_mode = 2
-background_energy_multiplier = 16.0
+background_energy_multiplier = 15.0
 sky = SubResource("Sky_mx20v")
+ambient_light_sky_contribution = 0.3
 glow_enabled = true
 glow_levels/3 = 0.0
 glow_levels/4 = 1.0
@@ -104,12 +116,10 @@ glow_blend_mode = 0
 glow_hdr_scale = 1.0
 volumetric_fog_density = 0.0
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_v7lfu"]
-top_radius = 1.0
-bottom_radius = 1.0
-height = 1.0
-
-[node name="Node3D" type="Node3D"]
+[node name="Node3D" type="Node3D" node_paths=PackedStringArray("terra")]
+script = ExtResource("1_38r3f")
+terra = NodePath("Terra")
+inimigo_scene = ExtResource("2_hbki5")
 
 [node name="Sol" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_x4ufw")
@@ -120,7 +130,7 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0
 script = ExtResource("9_bhhaf")
 
 [node name="Lua" type="MeshInstance3D" parent="." node_paths=PackedStringArray("terra")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 700)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2400, 0, 0)
 mesh = SubResource("SphereMesh_vrhoc")
 script = ExtResource("8_x4ufw")
 terra = NodePath("../Terra/TerraSolida")
@@ -133,6 +143,9 @@ script = ExtResource("4_ba883")
 transform = Transform3D(1, 0, 0, 0, 0.92050487, -0.39073113, 0, 0.39073113, 0.92050487, 0, 0, 0)
 mesh = SubResource("SphereMesh_it5d1")
 skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terra"]
+shape = SubResource("SphereShape3D_hbki5")
 
 [node name="PlanetAthmosphere" parent="Terra" instance=ExtResource("10_0sx8x")]
 planet_radius = 60.0
@@ -154,17 +167,31 @@ shader_params/u_cloud_shape_factor = 0.5
 shader_params/u_cloud_shape_scale = 0.1
 shader_params/u_cloud_coverage_cubemap = SubResource("Cubemap_j782l")
 
+[node name="Player" type="CharacterBody3D" parent="Terra" node_paths=PackedStringArray("terra")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 62, 0)
+collision_mask = 2
+script = ExtResource("17_47cj0")
+terra = NodePath("..")
+country_mask_tex = ExtResource("11_v7lfu")
+
+[node name="CameraPlayer" type="Camera3D" parent="Terra/Player"]
+transform = Transform3D(-3.876472e-08, 0.8868335, -0.46208915, -1, -4.3711385e-08, 0, -2.0198557e-08, 0.46208915, 0.8868335, -1.1337891, 0, 4.3761616)
+
+[node name="treno" parent="Terra/Player" instance=ExtResource("17_j782l")]
+transform = Transform3D(-0.090955816, 0.04101761, 0.00667758, 0.00681141, -0.001136717, 0.09976128, 0.04099559, 0.091193505, -0.0017599565, -0.46777344, 0, 2.346953)
+
+[node name="RayCast3D" type="RayCast3D" parent="Terra/Player"]
+
+[node name="Area3D" type="Area3D" parent="Terra/Player"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terra/Player/Area3D"]
+transform = Transform3D(0.5, 8.4523414e-08, 3.472899e-09, -8.4523414e-08, 0.5, 2.1130846e-08, -3.4728955e-09, -2.1130846e-08, 0.5, -0.46777344, 0, 2.346953)
+shape = SubResource("BoxShape3D_hbki5")
+
+[node name="CharacterBody3D" parent="Terra" node_paths=PackedStringArray("alvo_player") instance=ExtResource("20_vixfv")]
+alvo_player = NodePath("../Player")
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_0sx8x")
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("terra")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2280.339, 0, 0)
-script = ExtResource("16_v7lfu")
-terra = NodePath("../Terra/TerraSolida")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185.69092, 0, 0)
-mesh = SubResource("CylinderMesh_v7lfu")
-
-[node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
-transform = Transform3D(-0.14190331, 0, -0.98988056, 0, 1, 0, 0.98988056, 0, -0.14190331, -196.36987, 0, 0)
+[connection signal="area_entered" from="Terra/Player/Area3D" to="Terra/Player" method="_on_area_3d_area_entered"]

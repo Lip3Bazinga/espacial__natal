@@ -17,5 +17,5 @@ config/icon="res://icon.svg"
 
 [editor]
 
-movie_writer/movie_file="/home/prea/Documentos/USP/Disciplinas/6 periodo/Computacao Grafica/Projeto 2/jogo/video.avi"
+movie_writer/movie_file="/home/prea/Documentos/USP/Disciplinas/6 periodo/Computacao Grafica/Projeto 2/jogo/video2.avi"
 movie_writer/disable_vsync=true

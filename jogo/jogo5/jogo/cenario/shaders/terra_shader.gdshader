@@ -6,6 +6,7 @@ render_mode cull_back, depth_draw_opaque;
 /////////////////////////////////////////////////
 uniform sampler2D height_tex;   // heightmap (B/W)
 uniform sampler2D color_tex;    // mapa de cor (albedo)
+uniform sampler2D country_mask_tex; // cada país tem uma cor única
 uniform float height_scale = 0.02; // intensidade do relevo
 uniform bool invert_height = false;
 
@@ -28,6 +29,7 @@ void vertex() {
 /////////////////////////////////////////////////
 void fragment() {
     ALBEDO = texture(color_tex, UV).rgb;
+	//ALBEDO = texture(country_mask_tex, UV).rgb;
     ROUGHNESS = 0.8;
     METALLIC = 0.0;
 }
