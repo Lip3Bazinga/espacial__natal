@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://dk3te4bj2s4c1"]
+
+[ext_resource type="Script" uid="uid://cfa6valts48lg" path="res://InimigoController.gd" id="1_7ip54"]
+[ext_resource type="PackedScene" uid="uid://c7kq337e35b5e" path="res://modelos/avião.glb" id="2_en4xh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uf65v"]
+
+[node name="CharacterBody3D" type="CharacterBody3D"]
+collision_layer = 2
+script = ExtResource("1_7ip54")
+
+[node name="avião" parent="." instance=ExtResource("2_en4xh")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.50536495, 0)
+shape = SubResource("BoxShape3D_uf65v")

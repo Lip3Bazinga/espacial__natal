@@ -1,0 +1,294 @@
+[gd_scene load_steps=32 format=3 uid="uid://bpnby6unyclo1"]
+
+[ext_resource type="Script" uid="uid://bmndj1ii8tvhx" path="res://cenario/scripts/mainMenuController.gd" id="1_aks64"]
+[ext_resource type="Texture2D" uid="uid://csrpgre033cmt" path="res://cenario/imagens/banner.jpg" id="2_aks64"]
+[ext_resource type="FontFile" uid="uid://bdj6cmg5mcgkx" path="res://cenario/fonts/Snowy Christmas.otf" id="3_7v2no"]
+[ext_resource type="FontFile" uid="uid://o8awhq8y5rl6" path="res://cenario/fonts/ChristmasBlink.otf" id="4_1lr6b"]
+[ext_resource type="Script" uid="uid://kcg4vm07t4s1" path="res://cenario/scripts/LuzSolController.gd" id="5_hko72"]
+[ext_resource type="Shader" uid="uid://dix3x67fu330r" path="res://cenario/shaders/lua_shader.gdshader" id="6_sq6uy"]
+[ext_resource type="Texture2D" uid="uid://cy8ilw4mb280g" path="res://cenario/imagens/cores_lua.jpg" id="7_sjrmx"]
+[ext_resource type="Script" uid="uid://lsfwujwwhg40" path="res://cenario/scripts/LuaController.gd" id="8_3jev6"]
+[ext_resource type="Script" uid="uid://bwot3710i71um" path="res://cenario/scripts/TerraController.gd" id="9_om8sb"]
+[ext_resource type="Shader" uid="uid://b4td08aowpo2t" path="res://cenario/shaders/terra_shader.gdshader" id="10_710n3"]
+[ext_resource type="Texture2D" uid="uid://bjb7hfcqpxj7o" path="res://cenario/imagens/cores_dia.jpg" id="11_f7khy"]
+[ext_resource type="Texture2D" uid="uid://djcnok1sda5ev" path="res://cenario/imagens/heightmap.jpg" id="12_e2we0"]
+[ext_resource type="PackedScene" uid="uid://c36velgas3n3k" path="res://addons/zylann.atmosphere/planet_atmosphere.tscn" id="13_3gq5o"]
+[ext_resource type="Shader" uid="uid://ckbu2tpc7ltqp" path="res://addons/zylann.atmosphere/shaders/planet_atmosphere_clouds.gdshader" id="14_kyg17"]
+[ext_resource type="Script" uid="uid://ctj6ajkpvnwoo" path="res://addons/zylann.atmosphere/noise_cubemap.gd" id="15_l4e40"]
+[ext_resource type="Texture2D" uid="uid://d3y7thhsuan6t" path="res://cenario/imagens/skybox.jpg" id="16_vqr8l"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_nlkkf"]
+texture = ExtResource("2_aks64")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rhts7"]
+bg_color = Color(18.892157, 0, 0, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+shadow_size = 5
+shadow_offset = Vector2(0, 3.5)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8j05x"]
+render_priority = 0
+shader = ExtResource("6_sq6uy")
+shader_parameter/color_tex = ExtResource("7_sjrmx")
+
+[sub_resource type="SphereMesh" id="SphereMesh_82thp"]
+material = SubResource("ShaderMaterial_8j05x")
+radius = 16.2
+height = 32.4
+radial_segments = 32
+rings = 16
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y82kh"]
+render_priority = 0
+shader = ExtResource("10_710n3")
+shader_parameter/height_tex = ExtResource("12_e2we0")
+shader_parameter/color_tex = ExtResource("11_f7khy")
+shader_parameter/height_scale = 3.0
+shader_parameter/invert_height = false
+
+[sub_resource type="SphereMesh" id="SphereMesh_c4uwk"]
+material = SubResource("ShaderMaterial_y82kh")
+radius = 60.0
+height = 120.0
+radial_segments = 512
+rings = 256
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_m0fws"]
+radius = 60.0
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_qkeui"]
+noise_type = 2
+frequency = 0.1
+fractal_type = 2
+fractal_octaves = 8
+fractal_gain = 0.665
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_vb2nt"]
+noise = SubResource("FastNoiseLite_qkeui")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_16ssy"]
+domain_warp_enabled = true
+domain_warp_amplitude = 90.0
+domain_warp_frequency = 0.01
+domain_warp_fractal_octaves = 3
+
+[sub_resource type="Cubemap" id="Cubemap_lm22n"]
+script = ExtResource("15_l4e40")
+noise = SubResource("FastNoiseLite_16ssy")
+resolution = 256
+scale = Vector3(100, 200, 100)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_76dpb"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_1eqch"]
+panorama = ExtResource("16_vqr8l")
+energy_multiplier = 0.05
+
+[sub_resource type="Sky" id="Sky_rvprk"]
+sky_material = SubResource("PanoramaSkyMaterial_1eqch")
+
+[sub_resource type="Environment" id="Environment_6fdao"]
+background_mode = 2
+background_energy_multiplier = 15.0
+sky = SubResource("Sky_rvprk")
+ambient_light_sky_contribution = 0.3
+glow_enabled = true
+glow_levels/3 = 0.0
+glow_levels/4 = 1.0
+glow_levels/6 = 1.0
+glow_intensity = 4.0
+glow_strength = 0.8
+glow_blend_mode = 0
+glow_hdr_scale = 1.0
+volumetric_fog_density = 0.0
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_aks64")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -577.0
+offset_top = -320.0
+offset_right = 571.0
+offset_bottom = 328.79474
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1, 1.0018578)
+theme_override_styles/panel = SubResource("StyleBoxTexture_nlkkf")
+
+[node name="Label" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 337.0
+offset_top = 11.977749
+offset_right = 1078.0
+offset_bottom = 173.97775
+theme_override_fonts/font = ExtResource("3_7v2no")
+theme_override_font_sizes/font_size = 100
+text = "espacial natal"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -538.0
+offset_top = 180.17834
+offset_right = 529.0
+offset_bottom = 313.17834
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 35
+
+[node name="Start" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_1lr6b")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/hover = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/focus = SubResource("StyleBoxFlat_rhts7")
+text = "Jogar
+"
+
+[node name="LuzSol" type="DirectionalLight3D" parent="VBoxContainer/Start"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+script = ExtResource("5_hko72")
+
+[node name="Lua" type="MeshInstance3D" parent="VBoxContainer/Start" node_paths=PackedStringArray("terra")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2400, 0, 0)
+mesh = SubResource("SphereMesh_82thp")
+script = ExtResource("8_3jev6")
+terra = NodePath("")
+
+[node name="Terra" type="Node3D" parent="VBoxContainer/Start"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2000, 0, 0)
+script = ExtResource("9_om8sb")
+
+[node name="TerraSolida" type="MeshInstance3D" parent="VBoxContainer/Start/Terra"]
+transform = Transform3D(1, 0, 0, 0, 0.92050487, -0.39073113, 0, 0.39073113, 0.92050487, 0, 0, 0)
+mesh = SubResource("SphereMesh_c4uwk")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VBoxContainer/Start/Terra"]
+shape = SubResource("SphereShape3D_m0fws")
+
+[node name="PlanetAthmosphere" parent="VBoxContainer/Start/Terra" instance=ExtResource("13_3gq5o")]
+planet_radius = 60.0
+atmosphere_height = 20.0
+sun_path = NodePath("../../LuzSol")
+custom_shader = ExtResource("14_kyg17")
+shader_params/u_density = 0.3
+shader_params/u_scattering_strength = 0.2
+shader_params/u_atmosphere_modulate = Color(1, 0.980392, 0.964706, 1)
+shader_params/u_atmosphere_ambient_color = Color(0.0196078, 0.0196078, 0.0431373, 1)
+shader_params/u_cloud_density_scale = 0.2
+shader_params/u_cloud_bottom = 0.2
+shader_params/u_cloud_top = 0.3
+shader_params/u_cloud_blend = 0.5
+shader_params/u_cloud_shape_texture = SubResource("NoiseTexture3D_vb2nt")
+shader_params/u_cloud_shape_invert = 1.0
+shader_params/u_cloud_coverage_bias = 0.0
+shader_params/u_cloud_shape_factor = 0.5
+shader_params/u_cloud_shape_scale = 0.1
+shader_params/u_cloud_coverage_cubemap = SubResource("Cubemap_lm22n")
+
+[node name="Player" type="CharacterBody3D" parent="VBoxContainer/Start/Terra"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 62, 0)
+collision_mask = 2
+
+[node name="CameraPlayer" type="Camera3D" parent="VBoxContainer/Start/Terra/Player"]
+transform = Transform3D(-3.876472e-08, 0.8868335, -0.46208915, -1, -4.3711385e-08, 0, -2.0198557e-08, 0.46208915, 0.8868335, -1.1337891, 0, 4.3761616)
+
+[node name="treno" parent="VBoxContainer/Start/Terra/Player"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
+
+[node name="RayCast3D" type="RayCast3D" parent="VBoxContainer/Start/Terra/Player"]
+
+[node name="Area3D" type="Area3D" parent="VBoxContainer/Start/Terra/Player"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VBoxContainer/Start/Terra/Player/Area3D"]
+transform = Transform3D(0.5, 8.4523414e-08, 3.472899e-09, -8.4523414e-08, 0.5, 2.1130846e-08, -3.4728955e-09, -2.1130846e-08, 0.5, -0.46777344, 0, 2.346953)
+shape = SubResource("BoxShape3D_76dpb")
+
+[node name="CharacterBody3D" parent="VBoxContainer/Start/Terra"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="VBoxContainer/Start"]
+environment = SubResource("Environment_6fdao")
+
+[node name="Exit" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_1lr6b")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/hover = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxFlat_rhts7")
+theme_override_styles/focus = SubResource("StyleBoxFlat_rhts7")
+text = "Sair
+"
+
+[connection signal="pressed" from="VBoxContainer/Start" to="." method="_on_start_pressed"]
+[connection signal="area_entered" from="VBoxContainer/Start/Terra/Player/Area3D" to="VBoxContainer/Start/Terra/Player" method="_on_area_3d_area_entered"]
+[connection signal="pressed" from="VBoxContainer/Exit" to="." method="_on_exit_pressed"]
